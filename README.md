@@ -1,6 +1,6 @@
 # Budget App
  
-A Python budget tracker that manages spending across categories and visualizes expenses as a bar chart. Built as part of the [freeCodeCamp Python Certification]((https://www.freecodecamp.org/learn/python-v9)) certification.
+A Python budget tracker that manages spending across categories and visualizes expenses as a bar chart. Built as part of the [freeCodeCamp Python Certification]((https://www.freecodecamp.org/learn/python-v9)).
  
 ## Features
  
