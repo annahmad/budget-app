@@ -1,0 +1,66 @@
+import math
+
+class Category:
+    def __init__(self, name):
+        self.name = name
+        self.ledger = []
+    
+    def deposit(self, amount, description = ''):
+        self.ledger.append({'amount': amount, 'description': description})
+
+    def check_funds(self, amount):
+        return amount <= self.get_balance()
+
+    def withdraw(self, amount, description = ''):
+        if self.check_funds(amount):
+            self.ledger.append({'amount': -amount, 'description': description})
+            return True
+        return False
+
+    def get_balance(self):
+        return sum(item['amount'] for item in self.ledger)
+
+    def transfer(self, amount, category):
+        if self.check_funds(amount):
+            self.withdraw(amount, f'Transfer to {category.name}')
+            category.deposit(amount, f'Transfer from {self.name}')
+            return True
+        return False
+
+    def __str__(self):
+        title = self.name.center(30, '*')
+        lines = [title]
+        for item in self.ledger:
+            desc = item['description'][:23].ljust(23)
+            amt = f"{item['amount']:.2f}".rjust(7)
+            lines.append(desc + amt)
+        lines.append(f"Total: {self.get_balance():.2f}")
+        return '\n'.join(lines)
+
+def create_spend_chart(categories):
+    withdrawals = []
+    for cat in categories:
+        total = sum(-item['amount'] for item in cat.ledger if item['amount'] < 0)
+        withdrawals.append(total)
+
+    grand_total = sum(withdrawals)
+    percentages = [math.floor((w / grand_total) * 10) * 10 for w in withdrawals]
+
+    lines = ['Percentage spent by category']
+
+    for level in range(100, -1, -10):
+        row = str(level).rjust(3) + '| '
+        for p in percentages:
+            row += ('o' if p >= level else ' ') + '  '
+        lines.append(row)
+
+    lines.append('    ' + '-' * (len(categories) * 3 + 1))
+
+    max_len = max(len(cat.name) for cat in categories)
+    for i in range(max_len):
+        row = '     '                          # 5 spaces (matches "  0| " prefix width)
+        for cat in categories:
+            row += (cat.name[i] if i < len(cat.name) else ' ') + '  '
+        lines.append(row)
+
+    return '\n'.join(lines)
